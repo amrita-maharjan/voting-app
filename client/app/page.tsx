@@ -1,15 +1,26 @@
 import { Icons } from "@/components/Icons";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import TopicCreator from "@/components/TopicCreator";
+import { Button } from "@/components/ui/button";
 import { redis } from "@/lib/redis";
 import { Star } from "lucide-react";
+import ExistingTopics from "./[topic]/existingTopic";
 
 export default async function Home() {
   const servedRequests = await redis.get("served-requests");
+  const topics = await redis.smembers("existing-topics");
+  console.log("Topics from redis:", topics);
+  
+  const formattedTopics = topics.map((t: string, index: number) => ({
+    id: index.toString(),
+    title: t,
+  }));
 
   return (
     <section className="min-h-screen bg-grid-zinc-50s">
       <MaxWidthWrapper className="relative pb-24 pt-10 sm:pb-32 lg:pt-24 xl:pt-32 lg:pb-52 ">
+        <div className="flex justify-end"> <ExistingTopics topics={formattedTopics} /></div>
+     
         <div className="px-6 lg:px-0 lg:pt-4">
           <div className="relative mx-auto text-center flex flex-col items-center">
             <h1 className="relative leading-snug w-fit tracking-tight text-balance mt-16 font-bold text-gray-900 text-5xl md:text-6xl">
